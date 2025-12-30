@@ -20,6 +20,8 @@ public interface EmployeeMapper extends BaseMapper<Employee> {
     @Select("select * from employee where username = #{username}")
     Employee getByUsername(String username);
 
+    void update(Integer status, Long id);
+
     // insert 方法已经不需要了，可以直接使用 BaseMapper 的 insert 方法
     // void insert(Employee employee);
 }

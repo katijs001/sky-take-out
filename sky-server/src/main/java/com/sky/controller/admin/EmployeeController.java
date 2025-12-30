@@ -6,6 +6,7 @@ import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
+import com.sky.mapper.EmployeeMapper;
 import com.sky.properties.JwtProperties;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
@@ -35,6 +36,8 @@ public class EmployeeController {
     private EmployeeService employeeService;
     @Autowired
     private JwtProperties jwtProperties;
+    @Autowired
+    private EmployeeMapper employeeMapper;
 
     /**
      * 登录
@@ -78,13 +81,16 @@ public class EmployeeController {
         return Result.success();
     }
 
-   @PostMapping
-@ApiOperation("新增员工")
+    @PostMapping
+    @ApiOperation("新增员工")
     public Result save(@RequestBody EmployeeDTO employeeDTO) {
         log.info("新增员工：{}", employeeDTO);
         employeeService.save(employeeDTO);
         return Result.success();
     }
+
+
+
 
 /*
 分页查询
@@ -98,4 +104,16 @@ public class EmployeeController {
         PageResult pageResult= employeeService.page(employeePageQueryDTO);
         return Result.success(pageResult);
     }
+    @PostMapping("status/{status}")
+    @ApiOperation("启用禁用员工账号")
+    public Result startOrstop(@PathVariable Integer status, Long id)
+    {
+      log.info("启用禁用员工账号：{},{}", status, id);
+     Employee employee=new Employee();
+     employee.setId(id);
+     employee.setStatus(status);
+     employeeMapper.updateById(employee);
+      return Result.success();
+    }
+
 }
