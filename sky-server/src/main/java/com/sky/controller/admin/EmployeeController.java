@@ -71,8 +71,7 @@ public class EmployeeController {
     }
 
     /**
-     * 退出
-     *
+     * 员工退出
      * @return
      */
     @PostMapping("/logout")
@@ -90,12 +89,11 @@ public class EmployeeController {
     }
 
 
-
-
-/*
-分页查询
- */
-
+    /**
+     * 员工分页查询
+     * @param employeePageQueryDTO
+     * @return
+     */
     @GetMapping("/page")
     @ApiOperation("员工分页查询")
     public Result<PageResult> page(EmployeePageQueryDTO employeePageQueryDTO)
@@ -104,16 +102,37 @@ public class EmployeeController {
         PageResult pageResult= employeeService.page(employeePageQueryDTO);
         return Result.success(pageResult);
     }
+
+
+    /**
+     * 启用禁用员工账号
+     * @param status
+     * @param id
+     * @return
+     */
     @PostMapping("status/{status}")
     @ApiOperation("启用禁用员工账号")
     public Result startOrstop(@PathVariable Integer status, Long id)
     {
       log.info("启用禁用员工账号：{},{}", status, id);
-     Employee employee=new Employee();
-     employee.setId(id);
-     employee.setStatus(status);
-     employeeMapper.updateById(employee);
+      employeeService.startOrstop(status, id);
       return Result.success();
     }
+
+
+    /**
+     * 根据id查询员工
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    @ApiOperation("根据id查询员工")
+    public Result<Employee> findId(@PathVariable Integer id)
+    {
+        log.info("员工id为： {}",id);
+        Employee employee = employeeService.finId(id);
+        return Result.success(employee);
+    }
+
 
 }

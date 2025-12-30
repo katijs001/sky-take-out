@@ -23,8 +23,12 @@ public interface EmployeeService {
 
     /**
      * 启用禁用员工账号
+     *
      * @param status
      * @param id
+     * @return
      */
     void startOrstop(Integer status, Long id);
+
+    Employee finId(Integer id);
 }

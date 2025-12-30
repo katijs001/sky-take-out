@@ -21,10 +21,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
+@Slf4j
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
@@ -89,6 +90,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeMapper.insert(employee);
         return ;
     }
+
     @Override
     public PageResult page(EmployeePageQueryDTO employeePageQueryDTO) {
         // 使用 MyBatis-Plus 的分页
@@ -113,12 +115,37 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     /**
      * 启用禁用员工账号
+     *
      * @param status
      * @param id
+     * @return
      */
     @Override
     public void startOrstop(Integer status, Long id) {
-        employeeMapper.update(status,id);
+        Employee employee=new  Employee();
+        employee.setId(id);
+        employee.setStatus(status);
+        employeeMapper.updateById(employee);
+
+        return ;
+    }
+
+    @Override
+    public Employee finId(Integer id) {
+
+        //使用Mybatis Plus的selectById方法
+        Employee employee=employeeMapper.selectById(id);
+
+        if(employee==null){
+            log.info("员工不存在，id={}",id);
+            throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
+
+        }
+        employee.setPassword(null);
+        return employee;
+
+
+
     }
 
 }
