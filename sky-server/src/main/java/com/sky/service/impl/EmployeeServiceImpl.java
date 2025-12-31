@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.PasswordConstant;
 import com.sky.constant.StatusConstant;
+import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.dto.EmployeePageQueryDTO;
@@ -148,4 +149,43 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     }
 
-}
+    @Override
+    public void update(EmployeeDTO employeeDTO) {
+
+        //参数jiaoy
+        if (employeeDTO == null || employeeDTO.getId() == null) {
+            throw new IllegalArgumentException("员工信息或ID不能为空");
+        }
+
+        //检查员工是否存在
+        Employee existingEmployee = employeeMapper.selectById(employeeDTO.getId());
+        if (existingEmployee == null) {
+            throw new RuntimeException("员工不存在");
+        }
+
+
+        Employee employee=new  Employee();
+        BeanUtils.copyProperties(employeeDTO,employee);
+
+        //设置更新信息
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser(BaseContext.getCurrentId());
+
+        //执行更新
+        int rows = employeeMapper.updateById(employee);
+
+        if (rows == 0) {
+            log.warn("更新失败，受影响行数为0");
+            throw new RuntimeException("更新失败");
+        }
+        log.info("员工信息更新成功，id={}", employeeDTO.getId());
+
+    }
+    private Long getCurrentUserId() {
+        // 从ThreadLocal、SecurityContext或JWT中获取
+        // 暂时返回固定值或从请求中获取
+        return 10L;  // TODO: 改为实际的用户ID获取逻辑
+    }
+    }
+
+
